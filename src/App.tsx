@@ -2,7 +2,7 @@ import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/r
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
-import Page from './pages/Page';
+import Login from './pages/Login';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -19,6 +19,10 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
+import create_form from './pages/create_form';
+
+
+
 
 /* Theme variables */
 import './theme/variables.css';
@@ -32,11 +36,13 @@ const App: React.FC = () => {
         <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
+          <Route path="/pages/Login" component={Login} exact />
+          <Route path="/form-generator" component={create_form} exact />
             <Route path="/" exact={true}>
               <Redirect to="/folder/Inbox" />
             </Route>
             <Route path="/folder/:name" exact={true}>
-              <Page />
+           
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>
