@@ -1,25 +1,41 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonSelect, IonSelectOption, IonLabel } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonSelect, IonSelectOption, IonLabel, IonToast } from '@ionic/react';
 import { useState } from 'react';
 import { guardarFormulario } from '../models/dababase';
+
 
 const AgregarFormularioVacioPage: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [campos, setCampos] = useState<{ etiqueta: string; tipo: string; opciones?: string }[]>([]);
   const [tipoCampo, setTipoCampo] = useState('short_text');
   const [etiquetaCampo, setEtiquetaCampo] = useState('');
+  const [mostrarError, setMostrarError] = useState(false);
+  const [mostrarEtiquetaRepetida, setMostrarEtiquetaRepetida] = useState(false);
+  const [mostrarMensajeNombre, setMostrarMensajeNombre] = useState(false);
 
   const agregarCampo = () => {
-    const nuevoCampo = {
-      etiqueta: etiquetaCampo,
-      tipo: tipoCampo,
-      opciones: tipoCampo === 'checkbox' ? '' : undefined
-    };
-
-    setCampos([...campos, nuevoCampo]);
+    setCampos([...campos, { etiqueta: etiquetaCampo, tipo: tipoCampo, opciones: tipoCampo === 'checkbox' ? '' : undefined }]);
     setEtiquetaCampo('');
   };
 
   const guardarNuevoFormularioVacio = () => {
+    if (nombre.trim() === '') {
+      setMostrarMensajeNombre(true);
+      return;
+    }
+
+    if (campos.some((campo) => campo.etiqueta.trim() === '')) {
+      setMostrarError(true);
+      return;
+    }
+
+    const etiquetas = campos.map((campo) => campo.etiqueta.trim());
+    const duplicados = etiquetas.filter((etiqueta, index) => etiquetas.indexOf(etiqueta) !== index);
+
+    if (duplicados.length > 0) {
+      setMostrarEtiquetaRepetida(true);
+      return;
+    }
+
     const nuevoFormularioVacio = {
       Tipo: 'Vacio',
       Nombre: nombre,
@@ -50,11 +66,7 @@ const AgregarFormularioVacioPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonInput
-          placeholder="Nombre del formulario"
-          value={nombre}
-          onIonChange={(e) => setNombre(e.detail.value!)}
-        ></IonInput>
+        <IonInput placeholder="Nombre del formulario" value={nombre} onIonChange={(e) => setNombre(e.detail.value!)}></IonInput>
         {campos.map((campo, index) => (
           <div key={index}>
             <IonInput
@@ -96,6 +108,25 @@ const AgregarFormularioVacioPage: React.FC = () => {
         ))}
         <IonButton onClick={agregarCampo}>Agregar Campo</IonButton>
         <IonButton onClick={guardarNuevoFormularioVacio}>Guardar Formulario Vacío</IonButton>
+
+        <IonToast
+          isOpen={mostrarError}
+          onDidDismiss={() => setMostrarError(false)}
+          message="Por favor, complete todos los campos"
+          duration={2000}
+        />
+        <IonToast
+          isOpen={mostrarEtiquetaRepetida}
+          onDidDismiss={() => setMostrarEtiquetaRepetida(false)}
+          message="No se pueden repetir las etiquetas de los campos"
+          duration={2000}
+        />
+        <IonToast
+          isOpen={mostrarMensajeNombre}
+          onDidDismiss={() => setMostrarMensajeNombre(false)}
+          message="Por favor, ingrese un nombre para el formulario"
+          duration={2000}
+        />
       </IonContent>
     </IonPage>
   );
