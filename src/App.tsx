@@ -20,8 +20,8 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import create_form from './pages/create_form';
-
-
+import FormPage from './pages/view_json';
+import guardarFormulario from './pages/newform';
 
 
 /* Theme variables */
@@ -37,7 +37,9 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id="main">
           <Route path="/pages/Login" component={Login} exact />
+          <Route path="/pages/Forms" component={FormPage} exact />
           <Route path="/form-generator" component={create_form} exact />
+          <Route path="/pages/new" component={guardarFormulario} exact />
             <Route path="/" exact={true}>
               <Redirect to="/folder/Inbox" />
             </Route>

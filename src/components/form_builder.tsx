@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './form_builder.css';
 import {
   IonButton,
   IonInput,
@@ -7,9 +8,11 @@ import {
   IonSelect,
   IonSelectOption,
   IonDatetime,
-  IonCheckbox,
   IonList,
+  InputChangeEventDetail,
 } from '@ionic/react';
+
+
 
 interface Field {
   id: number;
@@ -108,6 +111,11 @@ const FormBuilder: React.FC = () => {
     setFields(updatedFields);
   };
 
+  const deleteField = (id: number) => {
+    const updatedFields = fields.filter((field) => field.id !== id);
+    setFields(updatedFields);
+  };
+
   const renderFieldInputs = (field: Field) => {
     switch (field.type) {
       case 'text':
@@ -190,11 +198,7 @@ const FormBuilder: React.FC = () => {
               }
             />
             <IonDatetime
-              displayFormat="DD/MM/YYYY"
-              placeholder="Fecha"
-              onIonChange={(event) =>
-                handleFieldLabelChange(field.id, event.detail.value!)
-              }
+              disabled={true} // Bloquea el datepicker
             />
           </IonItem>
         );
@@ -209,14 +213,13 @@ const FormBuilder: React.FC = () => {
       fields,
     };
 
+
+
+
     // Convertir a JSON y hacer algo con los datos guardados
     const jsonFormData = JSON.stringify(formData);
     console.log(jsonFormData);
   };
-
-    function deleteField(id: number): void {
-        throw new Error('Function not implemented.');
-    }
 
   return (
     <div>

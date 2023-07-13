@@ -13,7 +13,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import { folderOpenSharp, logInSharp, logOutSharp, newspaperSharp} from 'ionicons/icons';
 import './Menu.css';
-import Login from '../pages/Login';
+
 
 interface AppPage {
   url: string;
@@ -37,13 +37,13 @@ const appPages: AppPage[] = [
   },
   {
     title: 'Mis formularios',
-    url: '/page/forms',
+    url: '/pages/Forms',
     iosIcon: folderOpenSharp,
     mdIcon: folderOpenSharp
   },
   {
     title: 'Cerrar sesión',
-    url: '/page/Archived',
+    url: '/pages/new',
     iosIcon: logOutSharp,
     mdIcon: logOutSharp
   },
