@@ -31,19 +31,19 @@ const appPages: AppPage[] = [
   },
   {
     title: 'Crear Formularios',
-    url: '/form-generator',
+    url: '/pages/new',
     iosIcon: newspaperSharp,
     mdIcon: newspaperSharp
   },
   {
     title: 'Mis formularios',
-    url: '/pages/Forms',
+    url: '/pages/Empty_Forms',
     iosIcon: folderOpenSharp,
     mdIcon: folderOpenSharp
   },
   {
     title: 'Cerrar sesión',
-    url: '/pages/new',
+    url: '/pages/new2',
     iosIcon: logOutSharp,
     mdIcon: logOutSharp
   },
@@ -55,16 +55,15 @@ const Menu: React.FC = () => {
   const location = useLocation();
 
   return (
-    <IonMenu contentId="main" type="overlay">
+    <IonMenu contentId="main" type="push">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>Inbox</IonListHeader>
-          <IonNote>hi@ionicframework.com</IonNote>
+          <IonListHeader>Menú</IonListHeader>
 
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
-                <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
+                <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="inset" detail={true}>
                   <IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
                   <IonLabel>{appPage.title}</IonLabel>
                 </IonItem>
