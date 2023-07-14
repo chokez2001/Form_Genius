@@ -24,6 +24,8 @@ import create_form from './pages/create_form';
 import guardarFormulario from './pages/newform';
 import Login from './pages/Login';
 import FormulariosVaciosPage from './pages/get_empty_forms';
+import LlenarFormulario from './pages/fill_form';
+
 
 /* Theme variables */
 import './theme/variables.css';
@@ -37,11 +39,12 @@ const App: React.FC = () => {
         <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
-          <Route path="/pages/Login" component={Login} exact />
+          <Route path="/pages/login" component={Login} exact />
           {/* <Route path="/pages/Forms" component={FormPage} exact /> */}
           <Route path="/form-generator" component={create_form} exact />
           <Route path="/pages/new" component={guardarFormulario} exact />
-          <Route path="/pages/Empty_Forms" component={FormulariosVaciosPage} exact />
+          <Route path="/pages/empty_forms" component={FormulariosVaciosPage} exact />
+          <Route path="/pages/fill_form" component={LlenarFormulario} exact />
             <Route path="/" exact={true}>
               <Redirect to="/folder/Inbox" />
             </Route>

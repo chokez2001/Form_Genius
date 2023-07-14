@@ -53,6 +53,9 @@ const guardarFormulario = async (formulario: any) => {
 };
 
 
+
+
+
 const obtenerFormulariosVacios = async () => {
   try {
     const formulariosVaciosJSON = await storage.get('formulariosVacios');
@@ -69,4 +72,20 @@ const obtenerFormulariosVacios = async () => {
 };
 
 
-export { guardarFormulario, obtenerFormulariosVacios};
+
+const obtenerFormulariosLlenos = async () => {
+  try {
+    const formulariosLlenosJSON = await storage.get('formulariosLlenos');
+    if (formulariosLlenosJSON) {
+      const formulariosLlenos = JSON.parse(formulariosLlenosJSON) as any[];
+      return formulariosLlenos;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error al obtener los formularios Llenos:', error);
+    throw error;
+  }
+};
+
+export { guardarFormulario, obtenerFormulariosVacios, obtenerFormulariosLlenos};

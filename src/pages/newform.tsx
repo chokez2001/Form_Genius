@@ -1,8 +1,18 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonSelect, IonSelectOption, IonLabel, IonToast } from '@ionic/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonInput,
+  IonButton,
+  IonSelect,
+  IonSelectOption,
+  IonLabel,
+  IonToast,
+} from '@ionic/react';
 import { guardarFormulario } from '../models/dababase';
-import { createGesture, Gesture } from '@ionic/react';
-
 
 const AgregarFormularioVacioPage: React.FC = () => {
   const [nombre, setNombre] = useState('');
@@ -12,10 +22,16 @@ const AgregarFormularioVacioPage: React.FC = () => {
   const [mostrarError, setMostrarError] = useState(false);
   const [mostrarEtiquetaRepetida, setMostrarEtiquetaRepetida] = useState(false);
   const [mostrarMensajeNombre, setMostrarMensajeNombre] = useState(false);
+  const [mostrarMensajeCampos, setMostrarMensajeCampos] = useState(false);
+  const [confirmado, setConfirmado] = useState(false);
 
   const agregarCampo = () => {
     setCampos([...campos, { etiqueta: etiquetaCampo, tipo: tipoCampo, opciones: tipoCampo === 'checkbox' ? '' : undefined }]);
     setEtiquetaCampo('');
+  };
+
+  const confirmarGuardarNuevoFormulario = () => {
+    setConfirmado(true);
   };
 
   const guardarNuevoFormularioVacio = () => {
@@ -37,6 +53,11 @@ const AgregarFormularioVacioPage: React.FC = () => {
       return;
     }
 
+    if (campos.length === 0) {
+      setMostrarMensajeCampos(true);
+      return;
+    }
+
     const nuevoFormularioVacio = {
       Tipo: 'Vacio',
       Nombre: nombre,
@@ -45,7 +66,7 @@ const AgregarFormularioVacioPage: React.FC = () => {
       clave_anidada: campos.reduce((obj: any, campo) => {
         obj[campo.etiqueta] = { value: null, tipo: campo.tipo, opciones: campo.opciones };
         return obj;
-      }, {})
+      }, {}),
     };
 
     guardarFormulario(nuevoFormularioVacio)
@@ -53,10 +74,23 @@ const AgregarFormularioVacioPage: React.FC = () => {
         console.log('Nuevo formulario vacío guardado');
         setNombre('');
         setCampos([]);
+        setConfirmado(false);
       })
       .catch((error) => {
         console.error('Error al guardar el nuevo formulario vacío:', error);
       });
+  };
+
+  const onBlurConfirmar = () => {
+    if (confirmado) {
+      setConfirmado(false);
+    }
+  };
+
+  const onFocusConfirmar = () => {
+    if (!confirmado) {
+      setConfirmado(true);
+    }
   };
 
   return (
@@ -88,11 +122,11 @@ const AgregarFormularioVacioPage: React.FC = () => {
                 setCampos(nuevosCampos);
               }}
             >
-              <IonSelectOption value="short_text">Short Text</IonSelectOption>
-              <IonSelectOption value="long_text">Long Text</IonSelectOption>
-              <IonSelectOption value="date_picker">Date Picker</IonSelectOption>
+              <IonSelectOption value="short_text">Texto corto</IonSelectOption>
+              <IonSelectOption value="long_text">Texto largo</IonSelectOption>
+              <IonSelectOption value="date_picker">Fecha</IonSelectOption>
               <IonSelectOption value="checkbox">Checkbox</IonSelectOption>
-              <IonSelectOption value="img">Imagen/es</IonSelectOption>
+              <IonSelectOption value="imgs">Imagen/es</IonSelectOption>
             </IonSelect>
             {campo.tipo === 'checkbox' && (
               <IonInput
@@ -108,7 +142,13 @@ const AgregarFormularioVacioPage: React.FC = () => {
           </div>
         ))}
         <IonButton onClick={agregarCampo}>Agregar Campo</IonButton>
-        <IonButton onClick={guardarNuevoFormularioVacio}>Guardar Formulario Vacío</IonButton>
+        {!confirmado ? (
+          <IonButton onClick={confirmarGuardarNuevoFormulario}>Guardar Formulario Vacío</IonButton>
+        ) : (
+          <IonButton onClick={guardarNuevoFormularioVacio} onBlur={onBlurConfirmar} onFocus={onFocusConfirmar}>
+            Confirmar
+          </IonButton>
+        )}
 
         <IonToast
           isOpen={mostrarError}
@@ -128,10 +168,15 @@ const AgregarFormularioVacioPage: React.FC = () => {
           message="Por favor, ingrese un nombre para el formulario"
           duration={2000}
         />
+        <IonToast
+          isOpen={mostrarMensajeCampos}
+          onDidDismiss={() => setMostrarMensajeCampos(false)}
+          message="Por favor, ingrese al menos un campo"
+          duration={2000}
+        />
       </IonContent>
     </IonPage>
   );
 };
-
 
 export default AgregarFormularioVacioPage;

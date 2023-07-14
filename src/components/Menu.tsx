@@ -25,7 +25,7 @@ interface AppPage {
 const appPages: AppPage[] = [
   {
     title: 'Iniciar Sesión',
-    url: '/pages/Login',
+    url: '/pages/login',
     iosIcon: logInSharp,
     mdIcon: logInSharp
   },
@@ -37,7 +37,7 @@ const appPages: AppPage[] = [
   },
   {
     title: 'Mis formularios',
-    url: '/pages/Empty_Forms',
+    url: '/pages/empty_forms',
     iosIcon: folderOpenSharp,
     mdIcon: folderOpenSharp
   },

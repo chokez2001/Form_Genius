@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel } from '@ionic/react';
+import { useHistory } from 'react-router-dom';
 import { obtenerFormulariosVacios } from '../models/dababase';
 
 const FormulariosVaciosPage: React.FC = () => {
   const [formulariosVacios, setFormulariosVacios] = useState<any[]>([]);
+  const history = useHistory();
 
   useEffect(() => {
     const fetchFormulariosVacios = async () => {
@@ -18,6 +20,11 @@ const FormulariosVaciosPage: React.FC = () => {
     fetchFormulariosVacios();
   }, []);
 
+  const handleFormularioClick = (formulario: any) => {
+    // Redirigir a la página de detalle del formulario y pasar los valores como estado
+    history.push('/pages/fill_form', { formulario });
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -28,8 +35,8 @@ const FormulariosVaciosPage: React.FC = () => {
       <IonContent>
         <IonList>
           {formulariosVacios.map((formulario, index) => (
-            <IonItem key={index}>
-              <IonLabel>{JSON.stringify(formulario)}</IonLabel>
+            <IonItem key={index} onClick={() => handleFormularioClick(formulario)}>
+              <IonLabel>{formulario.Nombre}</IonLabel>
             </IonItem>
           ))}
         </IonList>
