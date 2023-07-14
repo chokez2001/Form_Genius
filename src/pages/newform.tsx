@@ -1,12 +1,13 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonSelect, IonSelectOption, IonLabel, IonToast } from '@ionic/react';
 import { useState } from 'react';
 import { guardarFormulario } from '../models/dababase';
+import { createGesture, Gesture } from '@ionic/react';
 
 
 const AgregarFormularioVacioPage: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [campos, setCampos] = useState<{ etiqueta: string; tipo: string; opciones?: string }[]>([]);
-  const [tipoCampo, setTipoCampo] = useState('short_text');
+  const [tipoCampo] = useState('short_text');
   const [etiquetaCampo, setEtiquetaCampo] = useState('');
   const [mostrarError, setMostrarError] = useState(false);
   const [mostrarEtiquetaRepetida, setMostrarEtiquetaRepetida] = useState(false);
@@ -62,7 +63,7 @@ const AgregarFormularioVacioPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Agregar Formulario Vacío</IonTitle>
+          <IonTitle>Agregar Un Nuevo Formulario</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -91,7 +92,7 @@ const AgregarFormularioVacioPage: React.FC = () => {
               <IonSelectOption value="long_text">Long Text</IonSelectOption>
               <IonSelectOption value="date_picker">Date Picker</IonSelectOption>
               <IonSelectOption value="checkbox">Checkbox</IonSelectOption>
-              <IonSelectOption value="img">Image</IonSelectOption>
+              <IonSelectOption value="img">Imagen/es</IonSelectOption>
             </IonSelect>
             {campo.tipo === 'checkbox' && (
               <IonInput
@@ -131,5 +132,6 @@ const AgregarFormularioVacioPage: React.FC = () => {
     </IonPage>
   );
 };
+
 
 export default AgregarFormularioVacioPage;

@@ -2,7 +2,7 @@ import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/r
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
-import Login from './pages/Login';
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -20,9 +20,10 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import create_form from './pages/create_form';
-import FormPage from './pages/view_json';
+// import FormPage from './pages/view_json';
 import guardarFormulario from './pages/newform';
-
+import Login from './pages/Login';
+import FormulariosVaciosPage from './pages/get_empty_forms';
 
 /* Theme variables */
 import './theme/variables.css';
@@ -37,9 +38,10 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id="main">
           <Route path="/pages/Login" component={Login} exact />
-          <Route path="/pages/Forms" component={FormPage} exact />
+          {/* <Route path="/pages/Forms" component={FormPage} exact /> */}
           <Route path="/form-generator" component={create_form} exact />
           <Route path="/pages/new" component={guardarFormulario} exact />
+          <Route path="/pages/Empty_Forms" component={FormulariosVaciosPage} exact />
             <Route path="/" exact={true}>
               <Redirect to="/folder/Inbox" />
             </Route>

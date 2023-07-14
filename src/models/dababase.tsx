@@ -53,35 +53,20 @@ const guardarFormulario = async (formulario: any) => {
 };
 
 
-
-
-const obtenerFormulario = async (formularioId: string) => {
+const obtenerFormulariosVacios = async () => {
   try {
-    const formularioJSON = await storage.get(formularioId);
-    if (formularioJSON) {
-      return JSON.parse(formularioJSON);
+    const formulariosVaciosJSON = await storage.get('formulariosVacios');
+    if (formulariosVaciosJSON) {
+      const formulariosVacios = JSON.parse(formulariosVaciosJSON) as any[];
+      return formulariosVacios;
     } else {
-      return null;
+      return [];
     }
   } catch (error) {
-    console.error('Error al obtener el formulario:', error);
-    return null;
+    console.error('Error al obtener los formularios vacíos:', error);
+    throw error;
   }
 };
 
 
-const actualizarFormulario = async (formularioId: string, formularioActualizado: any) => {
-  const formularioExistente = await obtenerFormulario(formularioId);
-  if (formularioExistente) {
-    const formularioActualizadoJSON = JSON.stringify(formularioActualizado);
-    return storage.set(formularioId, formularioActualizadoJSON);
-  } else {
-    return null;
-  }
-};
-
-const eliminarFormulario = (formularioId: string) => {
-  return storage.remove(formularioId);
-};
-
-export { guardarFormulario, obtenerFormulario, actualizarFormulario, eliminarFormulario };
+export { guardarFormulario, obtenerFormulariosVacios};
