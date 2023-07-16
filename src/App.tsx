@@ -1,7 +1,9 @@
-import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
+import { IonApp, IonButtons, IonMenuButton, IonRouterOutlet, IonSplitPane, IonTitle, IonToolbar, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Redirect, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Menu from './components/Menu';
+
+
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -19,13 +21,13 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import create_form from './pages/create_form';
+
 // import FormPage from './pages/view_json';
 import guardarFormulario from './pages/newform';
 import Login from './pages/Login';
 import FormulariosVaciosPage from './pages/get_empty_forms';
 import LlenarFormulario from './pages/fill_form';
-
+import Inicio from './pages/Inicio';
 
 /* Theme variables */
 import './theme/variables.css';
@@ -36,23 +38,16 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane contentId="main">
           <Menu />
           <IonRouterOutlet id="main">
+          <Route path="/" exact={true} />
+          <Route exact path="/home" component={Inicio} />
           <Route path="/pages/login" component={Login} exact />
-          {/* <Route path="/pages/Forms" component={FormPage} exact /> */}
-          <Route path="/form-generator" component={create_form} exact />
           <Route path="/pages/new" component={guardarFormulario} exact />
           <Route path="/pages/empty_forms" component={FormulariosVaciosPage} exact />
           <Route path="/pages/fill_form" component={LlenarFormulario} exact />
-            <Route path="/" exact={true}>
-              <Redirect to="/folder/Inbox" />
-            </Route>
-            <Route path="/folder/:name" exact={true}>
-           
-            </Route>
           </IonRouterOutlet>
-        </IonSplitPane>
+
       </IonReactRouter>
     </IonApp>
   );

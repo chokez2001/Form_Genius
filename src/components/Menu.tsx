@@ -7,11 +7,10 @@ import {
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { folderOpenSharp, logInSharp, logOutSharp, newspaperSharp} from 'ionicons/icons';
+import { colorFill, colorWand, folderOpenSharp, homeSharp, logInSharp, logOutSharp, newspaperSharp} from 'ionicons/icons';
 import './Menu.css';
 
 
@@ -23,6 +22,12 @@ interface AppPage {
 }
 
 const appPages: AppPage[] = [
+  {
+    title: 'Inicio',
+    url: '/home',
+    iosIcon: homeSharp,
+    mdIcon: homeSharp
+  },
   {
     title: 'Iniciar Sesión',
     url: '/pages/login',
@@ -63,7 +68,7 @@ const Menu: React.FC = () => {
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
-                <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="inset" detail={true}>
+                <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="full" detail={true}>
                   <IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
                   <IonLabel>{appPage.title}</IonLabel>
                 </IonItem>
@@ -72,8 +77,10 @@ const Menu: React.FC = () => {
           })}
         </IonList>
 
+        
       </IonContent>
-    </IonMenu>
+    </IonMenu>  
+    
   );
 };
 
