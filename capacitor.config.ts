@@ -4,8 +4,8 @@ const config: CapacitorConfig = {
   appId: 'com.formgenius.myapp',
   appName: 'FormGenius',
   webDir: 'dist',
-  server: {
-    androidScheme: 'https'
+  "server": {
+    androidScheme: "https",
   }
 };
 

@@ -27,7 +27,7 @@ import Inicio from './pages/Home';
 import Login from './pages/Login';
 import Registerpage from './pages/Register_page';
 import Dashboardpage from './pages/Dashboard_page';
-import FormulariosVaciosPage from './pages/Get_empty_forms';
+import FormulariosVaciosPage from './pages/get_empty_forms';
 import AgregarFormularioVacioPage from './pages/Newform';
 import MyPage from './pages/Firetest';
 import FormulariosVaciosSyncPage from './pages/Formularios_sync';

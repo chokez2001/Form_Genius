@@ -9,6 +9,7 @@ import {
   signInWithCredential,
   getRedirectResult,
   OAuthCredential,
+  signInWithPopup,
 } from "firebase/auth";
 
 import {
@@ -21,7 +22,7 @@ import {
 
 import { app, firestore_db } from "./firebase_conecction";
 
-import { useHistory } from 'react-router-dom';
+
 
 
 const auth = getAuth(app);
@@ -31,31 +32,27 @@ const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     provider.addScope("profile");
     provider.addScope("email");
-    await signInWithRedirect(auth, provider);
-    const result = await getRedirectResult(auth);
-    if (result) {
-      const user = result.user;
-      const credential = GoogleAuthProvider.credentialFromResult(
-        result
-      ) as OAuthCredential | null;
-      if (credential) {
-        const history = useHistory();
-        history.push('/home'); 
 
-        const q = query(
-          collection(firestore_db, "users"),
-          where("uid", "==", user.uid)
-        );
-        const docs = await getDocs(q);
-        if (docs.docs.length === 0) {
-          await addDoc(collection(firestore_db, "users"), {
-            uid: user.uid,
-            name: user.displayName,
-            authProvider: "google",
-            email: user.email,
-          });
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const credential = GoogleAuthProvider.credentialFromResult(
+      result
+    ) as OAuthCredential | null;
 
-        }
+    if (user && credential) {
+      const q = query(
+        collection(firestore_db, "users"),
+        where("uid", "==", user.uid)
+      );
+      const docs = await getDocs(q);
+
+      if (docs.docs.length === 0) {
+        await addDoc(collection(firestore_db, "users"), {
+          uid: user.uid,
+          name: user.displayName,
+          authProvider: "google",
+          email: user.email,
+        });
       }
     }
   } catch (err) {
