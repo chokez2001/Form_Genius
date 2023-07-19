@@ -3,7 +3,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonRefresher, IonToolbar, Ion
 import { useHistory } from 'react-router-dom';
 import { obtenerFormulariosVacios, borrarFormularioVacio } from '../models/dababase';
 import { informationCircleOutline, eyeOutline, trashOutline, createOutline } from 'ionicons/icons';
-import "./get_empty_forms.css"
+
 
 const FormulariosVaciosPage: React.FC = () => {
   const [formulariosVacios, setFormulariosVacios] = useState<any[]>([]);

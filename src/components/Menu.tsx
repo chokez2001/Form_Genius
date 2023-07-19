@@ -10,7 +10,7 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { colorFill, colorWand, folderOpenSharp, homeSharp, librarySharp, logInSharp, logOutSharp, newspaperSharp, syncCircleSharp} from 'ionicons/icons';
+import { colorFill, colorWand, folderOpenSharp, homeSharp, librarySharp, logInSharp, logOutSharp, newspaperSharp, personSharp, syncCircleSharp} from 'ionicons/icons';
 import './Menu.css';
 
 
@@ -35,6 +35,12 @@ const appPages: AppPage[] = [
     mdIcon: logInSharp
   },
   {
+    title: 'Mi perfil',
+    url: '/pages/dashboard',
+    iosIcon: personSharp,
+    mdIcon: personSharp
+  },
+  {
     title: 'Crear Formularios',
     url: '/pages/new',
     iosIcon: newspaperSharp,
@@ -49,7 +55,7 @@ const appPages: AppPage[] = [
 
   {
     title: 'Formularios llenos locales',
-    url: '/pages/form_sync',
+    url: '/pages/fire',
     iosIcon: folderOpenSharp,
     mdIcon: folderOpenSharp
   },
