@@ -113,13 +113,13 @@ import { informationCircleOutline } from 'ionicons/icons';
           <IonIcon slot="icon-only" icon={informationCircleOutline} />
         </IonButtons>
         <IonPopover trigger="click-trigger" triggerAction="click">
-        <IonContent >En esta sección se muestran los formularios disponibles para ser llenados. Al elegir uno de lista
+        <IonContent className="ion-padding">En esta sección se muestran los formularios disponibles para ser llenados. Al elegir uno de lista
           se mostrara su estructura y la posibilidad de llenarlo.
         </IonContent>
       </IonPopover>
           </IonToolbar>
         </IonHeader>
-        <IonContent>
+        <IonContent className="ion-padding">
           <IonInput
             placeholder="Nombre del formulario"
             value={nombre}

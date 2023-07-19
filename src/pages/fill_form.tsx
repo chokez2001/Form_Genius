@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton } from '@ionic/react';
-import { useLocation } from 'react-router-dom';
+
 
 const DetalleFormularioPage: React.FC = () => {
-  const location = useLocation<{ formulario: any }>();
+  
   const { formulario } = location.state;
   const [formularioLleno, setFormularioLleno] = useState<any>(null);
+
 
   const handleChange = (campo: string, value: any) => {
     setFormularioLleno((prevState: any) => ({

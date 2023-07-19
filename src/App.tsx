@@ -1,6 +1,6 @@
 import { IonApp, IonButtons, IonMenuButton, IonRouterOutlet, IonSplitPane, IonTitle, IonToolbar, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Route } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
 
 
@@ -22,13 +22,14 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-// import FormPage from './pages/view_json';
+// import FormPage from './pages/';
 import guardarFormulario from './pages/newform';
 import Login from './pages/Login';
 import FormulariosVaciosPage from './pages/get_empty_forms';
-import LlenarFormulario from './pages/fill_form';
+import DetalleFormularioPage from './pages/fill_form';
 import Inicio from './pages/Inicio';
-
+import MyPage from './pages/firetest';
+import FormulariosVaciosSyncPage from './pages/formularios_sync';
 /* Theme variables */
 import './theme/variables.css';
 
@@ -40,12 +41,15 @@ const App: React.FC = () => {
       <IonReactRouter>
           <Menu />
           <IonRouterOutlet id="main">
-          <Route path="/" exact={true} />
+          <Route path="/home" component={Inicio} exact={true} />
+          <Route exact path="/" render={() => <Redirect to="/home" />} />
           <Route exact path="/home" component={Inicio} />
           <Route path="/pages/login" component={Login} exact />
           <Route path="/pages/new" component={guardarFormulario} exact />
           <Route path="/pages/empty_forms" component={FormulariosVaciosPage} exact />
-          <Route path="/pages/fill_form" component={LlenarFormulario} exact />
+          <Route path="/pages/fill" component={DetalleFormularioPage} exact />
+          <Route path="/pages/fire" component={MyPage} exact />
+          <Route path="/pages/form_sync" component={FormulariosVaciosSyncPage} exact />
           </IonRouterOutlet>
 
       </IonReactRouter>

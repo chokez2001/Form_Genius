@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IonContent, IonHeader, IonLabel, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButtons, IonContent, IonHeader, IonRefresher, IonLabel, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { Geolocation} from '@capacitor/geolocation';
 import logo from '../assets/logo.svg';
 
@@ -42,11 +42,19 @@ const Inicio: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonMenuButton></IonMenuButton>
+          </IonButtons>
           <IonTitle>Inicio</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
+
+      <div style={{ background: 'linear-gradient(to left, #489DF0, #080079)', 
+      display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <img src={logo} alt="Custom SVG" />
+      </div>
+
 
         {location && (
           <div>
