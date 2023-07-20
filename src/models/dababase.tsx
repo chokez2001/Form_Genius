@@ -35,7 +35,7 @@ const guardarFormularioVacio = async (formulario: any) => {
 
 
 
-const guardarFormularioLleno = async (formulario: any) => {
+const guardarFormularioLleno = async (formulario: { Nombre: any; id_padre: any; }) => {
   try {
     const formulariosVaciosJSON = await storage.get('formulariosVacios');
     const formulariosLlenosJSON = await storage.get('formulariosLlenos');
@@ -44,15 +44,15 @@ const guardarFormularioLleno = async (formulario: any) => {
     let formulariosLlenos = formulariosLlenosJSON ? JSON.parse(formulariosLlenosJSON) : [];
 
     const nombre = formulario.Nombre;
-    const formularioPadre = formulario.Formulario_padre;
+    const id_padre = formulario.id_padre;
     const formularioId = `H${formulariosLlenos.length + 1}`;
 
-    if (formularioPadre && !formulariosVacios.some((form: any) => form.Id === formularioPadre)) {
+    if (id_padre && !formulariosVacios.some((form: { Id: any; }) => form.Id === id_padre)) {
       console.error('No se encontró el formulario vacío padre');
       return;
     }
 
-    if (formulariosLlenos.some((form: any) => form.Nombre === nombre)) {
+    if (formulariosLlenos.some((form: { Nombre: any; }) => form.Nombre === nombre)) {
       console.error('Ya existe un formulario lleno con el mismo nombre');
       return;
     }
@@ -82,6 +82,25 @@ const obtenerFormulariosVacios = async () => {
     throw error;
   }
 };
+
+
+// Obtener el formulario vacío específico según el ID proporcionado
+const obtenerFormularioVacioPorID = async (formularioID: string) => {
+  try {
+    const formulariosVaciosJSON = await storage.get('formulariosVacios');
+    if (formulariosVaciosJSON) {
+      const formulariosVacios = JSON.parse(formulariosVaciosJSON) as any[];
+      const formulario = formulariosVacios.find((form) => form.Id === formularioID);
+      return formulario || null;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error al obtener el formulario vacío:', error);
+    throw error;
+  }
+};
+
 
 
 
@@ -144,4 +163,4 @@ const borrarFormularioVacio = async (formularioId: string) => {
 };
 
 
-export { guardarFormularioLleno, obtenerFormulariosVacios, obtenerFormulariosLlenos, guardarFormularioVacio, editarFormularioVacio, borrarFormularioVacio};
+export { guardarFormularioLleno, obtenerFormularioVacioPorID, obtenerFormulariosVacios, obtenerFormulariosLlenos, guardarFormularioVacio, editarFormularioVacio, borrarFormularioVacio};

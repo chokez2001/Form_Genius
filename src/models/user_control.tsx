@@ -78,8 +78,6 @@ const registerWithEmailAndPassword = async (name: string, email: string, passwor
     // Enviar el correo de verificación
     await sendEmailVerification(user);
 
-    // Cerrar sesión para que el usuario no quede autenticado automáticamente
-    await signOut(auth);
 
     // Registro exitoso, mostrar mensaje de éxito en la alerta
     alert("Registro exitoso. Por favor, verifica tu correo electrónico antes de iniciar sesión.");

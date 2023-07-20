@@ -78,9 +78,13 @@ const FormulariosVaciosPage: React.FC = () => {
     setFormularioSeleccionado(null);
   };
 
+
+
   const handleLlenarFormulario = (formulario: any) => {
-    // Lógica para llenar el formulario vacío
+    // Navigate to DetalleFormularioPage with the selected form data as state
+    history.push('/pages/fill', { formularioSeleccionado: formulario });
   };
+  
 
 
 

@@ -28,8 +28,9 @@ import Login from './pages/Login';
 import Registerpage from './pages/Register_page';
 import ResetPage from './pages/Reset_password';
 import Dashboardpage from './pages/Dashboard_page';
-import FormulariosVaciosPage from './pages/get_empty_forms';
+import FormulariosVaciosPage from './pages/Get_empty_forms';
 import AgregarFormularioVacioPage from './pages/Newform';
+import DetalleFormularioPage from './pages/Fill_form';
 import MyPage from './pages/Firetest';
 import FormulariosVaciosSyncPage from './pages/Formularios_sync';
 /* Theme variables */
@@ -54,7 +55,7 @@ const App: React.FC = () => {
           <Route path="/pages/dashboard" component={Dashboardpage} exact />
           <Route path="/pages/new" component={AgregarFormularioVacioPage} exact />
           <Route path="/pages/empty_forms" component={FormulariosVaciosPage} exact />
-          {/* <Route path="/pages/fill" component={DetalleFormularioPage} exact /> */}
+          <Route path="/pages/fill" component={DetalleFormularioPage} exact />
           <Route path="/pages/fire" component={MyPage} exact />
           <Route path="/pages/form_sync" component={FormulariosVaciosSyncPage} exact />
           </IonRouterOutlet>
