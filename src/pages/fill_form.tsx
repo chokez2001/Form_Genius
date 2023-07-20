@@ -1,43 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useRef} from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton } from '@ionic/react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { guardarFormularioLleno } from '../models/dababase';
+import { useLocation, useHistory } from 'react-router-dom';
+import { guardarFormularioLleno } from '../models/dababase'; // Import the guardarFormularioLleno function
 
 interface LocationState {
   formularioSeleccionado: any;
 }
 
 const DetalleFormularioPage: React.FC = () => {
-  const history = useHistory();
   const location = useLocation<LocationState>();
+  const history = useHistory();
   const { formularioSeleccionado } = location.state || { formularioSeleccionado: null };
-
   const [formularioLleno, setFormularioLleno] = useState<any | null>(null);
+
+  // Use useRef to create a mutable reference to the form data
+  const formularioLlenoRef = useRef<any | null>({
+    ...formularioSeleccionado,
+    campos: Object.keys(formularioSeleccionado.campos).reduce((acc: any, campo) => {
+      acc[campo] = { ...formularioSeleccionado.campos[campo], value: '' };
+      return acc;
+    }, {})
+  });
 
   if (!formularioSeleccionado) {
     return <div>Formulario no encontrado.</div>;
   }
 
   const handleChange = (campo: string, value: any) => {
-    setFormularioLleno((prevForm: { campos: { [x: string]: any; }; }) => ({
-      ...prevForm,
-      campos: {
-        ...prevForm.campos,
-        [campo]: {
-          ...prevForm.campos[campo],
-          value: value,
-        },
-      },
-    }));
+    formularioLlenoRef.current.campos[campo].value = value;
   };
 
   const handleSubmit = async () => {
     try {
       // Call the function to save the filled form
-      await guardarFormularioLleno(formularioLleno);
+      await guardarFormularioLleno(formularioLlenoRef.current);
 
       // Navigate back to the previous page or any other desired destination
-      history.push('/pages/fill');
+      history.push('/pages/empty_forms');
     } catch (error) {
       console.error('Error al guardar el formulario lleno:', error);
     }
@@ -52,8 +51,8 @@ const DetalleFormularioPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonList>
-          {Object.keys(formularioSeleccionado.campos).map((campo, index) => {
-            const campoConfig = formularioSeleccionado.campos[campo];
+          {Object.keys(formularioLlenoRef.current.campos).map((campo, index) => {
+            const campoConfig = formularioLlenoRef.current.campos[campo];
             return (
               <IonItem key={index}>
                 <IonLabel position="floating">{campo}</IonLabel>
@@ -68,8 +67,8 @@ const DetalleFormularioPage: React.FC = () => {
                 )}
                 {campoConfig.tipo === 'checkbox' && (
                   <>
-                    {campoConfig.opciones.split(',').map((opcion: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, optionIndex: React.Key | null | undefined) => (
-                      <IonItem key={optionIndex}>
+                    {campoConfig.opciones.split(',').map((opcion: string, index: React.Key | null | undefined) => (
+                      <IonItem key={index}>
                         <IonLabel>{opcion}</IonLabel>
                         <IonCheckbox
                           slot="start"
@@ -81,7 +80,7 @@ const DetalleFormularioPage: React.FC = () => {
                             if (checked) {
                               updatedOptions = [...selectedOptions, opcion];
                             } else {
-                              updatedOptions = selectedOptions.filter((opt: string | number | boolean | React.ReactPortal | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined) => opt !== opcion);
+                              updatedOptions = selectedOptions.filter((opt: string) => opt !== opcion);
                             }
                             handleChange(campo, updatedOptions);
                           }}
@@ -100,6 +99,7 @@ const DetalleFormularioPage: React.FC = () => {
       </IonContent>
     </IonPage>
   );
+  
 };
 
 export default DetalleFormularioPage;
