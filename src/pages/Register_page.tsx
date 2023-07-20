@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { IonPage, IonContent, IonInput, IonButton, IonToast, IonLabel, IonRouterLink } from "@ionic/react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, registerWithEmailAndPassword, signInWithGoogle } from "../models/user_control";
+import { auth, registerWithEmailAndPassword } from "../models/user_control";
 
 const Registerpage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ const Registerpage: React.FC = () => {
 
   useEffect(() => {
     if (loading) return;
-    if (user) history.replace("/dashboard");
+    if (user) history.replace("/pages/dashboard");
   }, [user, loading]);
 
   const [showToast, setShowToast] = useState(false);
@@ -58,9 +58,9 @@ const Registerpage: React.FC = () => {
         <IonButton expand="full" color="dark" onClick={register}>
           Registrarse
         </IonButton>
-        <IonButton expand="full" onClick={signInWithGoogle}>
+        {/* <IonButton expand="full" onClick={signInWithGoogle}>
           Registrarse con Google
-        </IonButton>
+        </IonButton> */}
         <IonContent className="ion-text-center">
         <IonLabel>¿Ya tienes una cuenta? </IonLabel>
           <IonRouterLink  color='tertiary' routerLink="/pages/login"><u>Inicia sesión</u></IonRouterLink>

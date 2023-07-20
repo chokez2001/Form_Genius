@@ -1,43 +1,71 @@
 import React, { useState } from 'react';
-import { IonPage, IonContent, IonInput, IonButton, IonToast, IonRouterLink, IonLabel, IonButtons, IonHeader, IonMenuButton, IonTitle, IonToolbar } from '@ionic/react';
-import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../models/user_control';
+import {
+  IonPage,
+  IonContent,
+  IonInput,
+  IonButton,
+  IonToast,
+  IonRouterLink,
+  IonLabel,
+  IonButtons,
+  IonHeader,
+  IonMenuButton,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react';
+import { auth, logInWithEmailAndPassword } from '../models/user_control';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import logo from '../assets/logo.svg';
-
+import { signOut } from 'firebase/auth';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastColor, setToastColor] = useState('danger');
 
   const [user] = useAuthState(auth);
 
   const handleLogin = async () => {
     try {
-      await logInWithEmailAndPassword(username, password);
-      // Inicio de sesión exitoso
-      setShowToast(true);
+      const errorMessage = await logInWithEmailAndPassword(username, password);
+      if (errorMessage) {
+        // Inicio de sesión fallido, mostrar el mensaje de error en la alerta
+        setToastMessage(errorMessage);
+        setToastColor('danger');
+        setShowToast(true);
+        
+        
+      } else {
+        // Inicio de sesión exitoso, mostrar mensaje de éxito en la alerta
+        setToastMessage('Inicio de sesión exitoso');
+        setToastColor('success');
+        setShowToast(true);
+      }
     } catch (error) {
       console.error(error);
-      // Inicio de sesión fallido
+      // Ocurrió un error inesperado durante el inicio de sesión, mostrar mensaje de error en la alerta
+      setToastMessage('Ocurrió un error durante el inicio de sesión. Por favor, inténtalo de nuevo más tarde.');
+      setToastColor('danger');
       setShowToast(true);
     }
   };
 
-  
-  const handleGoogleLogin = async () => {
-    try {
-      await signInWithGoogle();
-      // Inicio de sesión con Google exitoso
-      setShowToast(true);
-    } catch (error) {
-      console.error(error);
-      // Inicio de sesión con Google fallido
-      setShowToast(true);
-    }
-  };
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     await signInWithGoogle();
+  //     // Inicio de sesión con Google exitoso
+  //     setShowToast(true);
+  //   } catch (error) {
+  //     console.error(error);
+  //     // Inicio de sesión con Google fallido
+  //     setShowToast(true);
+  //   }
+  // };
 
   if (user) {
+    console.log(user.emailVerified);
     // Si el usuario ya está autenticado, puedes redirigirlo a otra página o mostrar un mensaje de bienvenida
     return (
       <IonPage>
@@ -60,7 +88,7 @@ const Login: React.FC = () => {
       </IonHeader>  
       <IonContent className='ion-padding'>
         
-        <div style={{ background: 'linear-gradient(to left, #000000, #808080)', 
+        <div style={{ background: 'linear-gradient(to left, #202020, #808080)', 
         display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <img src={logo} alt="Custom SVG" />
         </div>
@@ -81,11 +109,11 @@ const Login: React.FC = () => {
         <IonButton expand="full" color="dark" onClick={handleLogin}>
           Iniciar sesión
         </IonButton>
-        <IonButton expand="full" onClick={handleGoogleLogin}>
+        {/* <IonButton expand="full" onClick={handleGoogleLogin}>
           Iniciar sesión con Google
-        </IonButton >
+        </IonButton > */}
         <IonContent className="ion-text-center">
-          <IonRouterLink color='tertiary'  routerLink="/reset"><u>¿Olvidaste tu contraseña?</u></IonRouterLink>
+          <IonRouterLink color='tertiary'  routerLink="/pages/reset_password"><u>¿Olvidaste tu contraseña?</u></IonRouterLink>
             <br />
           <IonLabel>¿No tienes una cuenta? </IonLabel>
           <IonRouterLink  color='tertiary' routerLink="/pages/register"><u>Regístrate</u></IonRouterLink>
@@ -93,8 +121,9 @@ const Login: React.FC = () => {
        
         <IonToast
           isOpen={showToast}
-          message={showToast ? 'Inicio de sesión fallido' : ''}
+          message={toastMessage}
           duration={2000}
+          color={toastColor}
           onDidDismiss={() => setShowToast(false)}
         />
       </IonContent>

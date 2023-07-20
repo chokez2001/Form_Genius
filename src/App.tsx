@@ -26,6 +26,7 @@ import '@ionic/react/css/display.css';
 import Inicio from './pages/Home';
 import Login from './pages/Login';
 import Registerpage from './pages/Register_page';
+import ResetPage from './pages/Reset_password';
 import Dashboardpage from './pages/Dashboard_page';
 import FormulariosVaciosPage from './pages/get_empty_forms';
 import AgregarFormularioVacioPage from './pages/Newform';
@@ -33,6 +34,7 @@ import MyPage from './pages/Firetest';
 import FormulariosVaciosSyncPage from './pages/Formularios_sync';
 /* Theme variables */
 import './theme/variables.css';
+
 
 
 setupIonicReact();
@@ -48,6 +50,7 @@ const App: React.FC = () => {
           <Route exact path="/home" component={Inicio} />
           <Route path="/pages/login" component={Login} exact />
           <Route path="/pages/register" component={Registerpage} exact />
+          <Route path="/pages/reset_password" component={ResetPage} exact />
           <Route path="/pages/dashboard" component={Dashboardpage} exact />
           <Route path="/pages/new" component={AgregarFormularioVacioPage} exact />
           <Route path="/pages/empty_forms" component={FormulariosVaciosPage} exact />
