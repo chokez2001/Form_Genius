@@ -92,18 +92,21 @@ const Login: React.FC = () => {
         display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <img src={logo} alt="Custom SVG" />
         </div>
-        
+        <br />
         <IonInput
+          label="Correo electrónico"
+          labelPlacement="floating"
           fill="outline"
           value={username}
-          placeholder="Correo electrónico"
+          
           onIonChange={(e) => setUsername(e.detail.value!)}
         />
         <IonInput
           fill="outline"
+          labelPlacement="floating"
           type="password"
           value={password}
-          placeholder="Contraseña"
+          label="Contraseña"
           onIonChange={(e) => setPassword(e.detail.value!)}
         />
         <IonButton expand="full" color="dark" onClick={handleLogin}>
