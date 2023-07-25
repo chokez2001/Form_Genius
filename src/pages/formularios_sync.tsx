@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonButton } from '@ionic/react';
-import { obtenerFormulariosVacios, sincronizarFormulariosVacios } from '../models/sincronization';
-
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonButton, IonNote } from '@ionic/react';
+import { obtenerFormulariosLlenos } from '../models/dababase';
+import { sincronizarFormulariosVacios } from '../models/sincronization';
 const FormulariosVaciosSyncPage: React.FC = () => {
-  const [formulariosVacios, setFormulariosVacios] = useState<any[]>([]);
+  const [formulariosLlenos, setFormulariosLlenos] = useState<any[]>([]);
 
   useEffect(() => {
-    obtenerFormulariosVacios()
+    obtenerFormulariosLlenos()
       .then((formularios) => {
-        setFormulariosVacios(formularios);
+        setFormulariosLlenos(formularios);
       })
       .catch((error) => {
         console.error('Error al obtener los formularios vacíos:', error);
@@ -25,22 +25,24 @@ const FormulariosVaciosSyncPage: React.FC = () => {
       });
   };
 
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Formularios Vacíos</IonTitle>
+          <IonTitle>Formularios Llenos</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonList>
-          {formulariosVacios.map((formulario) => (
-            <IonItem key={formulario.Id}>
-              <IonLabel>{formulario.Nombre}</IonLabel>
-            </IonItem>
-          ))}
-        </IonList>
-        <IonButton expand="block" onClick={handleSincronizar}>Sincronizar con Firestore</IonButton>
+      <IonList>
+  {formulariosLlenos.map((formulario) => (
+    <IonItem key={formulario.Id}>
+      <IonNote>{JSON.stringify(formulario)}</IonNote>
+    </IonItem>
+  ))}
+</IonList>
+<IonButton expand="block" onClick={handleSincronizar}>Sincronizar con Firestore</IonButton>
+
       </IonContent>
     </IonPage>
   );

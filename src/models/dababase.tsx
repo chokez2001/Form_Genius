@@ -5,8 +5,6 @@ const storage = new Storage();
 storage.create();
 
 
-
-
 const guardarFormularioVacio = async (formulario: any) => {
   try {
     const formulariosVaciosJSON = await storage.get('formulariosVacios');
@@ -83,6 +81,23 @@ const obtenerFormulariosVacios = async () => {
   }
 };
 
+const obtenerFormulariosLlenos = async () => {
+  try {
+    const formulariosLlenosJSON = await storage.get('formulariosLlenos');
+    if (formulariosLlenosJSON) {
+      const formulariosLlenos = JSON.parse(formulariosLlenosJSON) as any[];
+      return formulariosLlenos;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error al obtener los formularios Llenos:', error);
+    throw error;
+  }
+};
+
+
+
 
 // Obtener el formulario vacío específico según el ID proporcionado
 const obtenerFormularioVacioPorID = async (formularioID: string) => {
@@ -103,21 +118,6 @@ const obtenerFormularioVacioPorID = async (formularioID: string) => {
 
 
 
-
-const obtenerFormulariosLlenos = async () => {
-  try {
-    const formulariosLlenosJSON = await storage.get('formulariosLlenos');
-    if (formulariosLlenosJSON) {
-      const formulariosLlenos = JSON.parse(formulariosLlenosJSON) as any[];
-      return formulariosLlenos;
-    } else {
-      return [];
-    }
-  } catch (error) {
-    console.error('Error al obtener los formularios Llenos:', error);
-    throw error;
-  }
-};
 
 
 

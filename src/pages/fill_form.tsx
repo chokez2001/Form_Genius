@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail, useIonToast } from '@ionic/react';
 import { useLocation, useHistory } from 'react-router-dom';
-import { Geolocation } from '@ionic-native/geolocation';
+import { Geolocation} from '@capacitor/geolocation';
+import { NativeSettings, AndroidSettings} from 'capacitor-native-settings';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
+
+
 import { guardarFormularioLleno } from '../models/dababase'; // Import the guardarFormularioLleno function
 
 interface LocationState {
@@ -21,6 +27,7 @@ const DetalleFormularioPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showError, setShowError] = useState<boolean>(false);
   const [gpsLocation, setGpsLocation] = useState<{ latitud: number; longitud: number } | null>(null);
+
 
   // Utilizar useRef para crear referencias a los inputs del nombre del campo
   const campoNameInputsRef = useRef<(HTMLIonInputElement | null)[]>([]);
@@ -64,18 +71,21 @@ const DetalleFormularioPage: React.FC = () => {
     if (inputIndex !== -1) {
       const inputElement = campoNameInputsRef.current[inputIndex];
       const newName = (inputElement?.value as string)?.trim() || campo; // Cast the value to string and use the original campo name if the input is empty after trimming
-      setFormularioLleno((prevFormulario: { campos: { [x: string]: any; }; }) => ({
-        ...prevFormulario,
-        campos: {
-          ...prevFormulario.campos,
-          [campo]: {
-            ...prevFormulario.campos[campo],
-            name: newName
-          }
+      setFormularioLleno((prevFormulario: { campos: { [x: string]: any; }; }) => {
+        const newCampos = { ...prevFormulario.campos };
+        if (newCampos[campo]) {
+          newCampos[newName] = { ...newCampos[campo], name: newName }; // Actualizar el nombre del campo dentro del objeto
+          delete newCampos[campo]; // Eliminar la clave anterior del objeto
         }
-      }));
+        return {
+          ...prevFormulario,
+          campos: newCampos,
+        };
+      });
     }
   };
+  
+  
   
   const handleCampoNameClick = (campo: string) => {
     const inputIndex = camposList.indexOf(campo);
@@ -102,22 +112,44 @@ const DetalleFormularioPage: React.FC = () => {
     setTouchStartTime(null);
   };
 
-  const getGpsLocation = async () => {
-    try {
-      const position = await Geolocation.getCurrentPosition();
-      const latitud = position.coords.latitude;
-      const longitud = position.coords.longitude;
-      setGpsLocation({ latitud, longitud });
 
-      // Actualiza el estado del formularioLleno con la ubicación GPS
-      setFormularioLleno((prevFormulario: any) => ({
-        ...prevFormulario,
-        UbicacionGPS: { latitud, longitud },
-      }));
-    } catch (error) {
-      console.error('Error al obtener la ubicación GPS:', error);
-    }
+  // const requestLocationPermission = async () => {
+  //   try {
+  //     // Verificar si el GPS está habilitado
+     
+  //     const isGPSEnabled = await Diagnostic.isLocationEnabled();
+  
+  //     if (isGPSEnabled) {
+  //       // Si los servicios de geolocalización están habilitados, proceder con obtener la ubicación.
+  //       getLocation();
+  //     } else {
+  //       // Mostrar mensaje al usuario para que active la ubicación manualmente
+  //       console.log('Los servicios de geolocalización están desactivados. Por favor, habilita la ubicación desde la configuración del dispositivo.');
+        
+  //       // Abrir la configuración de ubicación en Android
+  //       Diagnostic.switchToLocationSettings();
+  //       return;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error al verificar el estado del GPS:', error);
+  //   }
+  // };
+  
+  const getLocation = async () => {
+    // Obtener la ubicación
+    const position = await Geolocation.getCurrentPosition();
+    const latitud = position.coords.latitude;
+    const longitud = position.coords.longitude;
+    setGpsLocation({ latitud, longitud });
+  
+    // Actualizar el estado del formularioLleno con la ubicación GPS
+    setFormularioLleno((prevFormulario: any) => ({
+      ...prevFormulario,
+      UbicacionGPS: { latitud, longitud },
+    }));
   };
+
+ 
 
 
   useEffect(() => {
@@ -141,12 +173,71 @@ const DetalleFormularioPage: React.FC = () => {
 
       setCamposList(camposKeys);
       setFormularioLleno(initialFormularioLleno);
-      getGpsLocation();
+      getLocation();
+      // requestLocationPermission();
     }
   }, [formularioSeleccionado]);
 
 
+  // Función para guardar la referencia de la imagen 
+
+  const [presentToast] = useIonToast();
+
   
+  const captureOrSelectImage = async (campo: string) => {
+    try {
+      const image = await Camera.getPhoto({
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Prompt,
+      });
+
+      const base64Image = image.base64String;
+
+      // Actualiza el campo en el formularioLleno con el valor de la imagen
+      setFormularioLleno((prevFormulario: { campos: { [x: string]: any; }; }) => ({
+        ...prevFormulario,
+        campos: {
+          ...prevFormulario.campos,
+          [campo]: {
+            ...prevFormulario.campos[campo],
+            value: base64Image,
+          },
+        },
+      }));
+
+      // Guarda la información de la imagen en el Local Storage
+      saveImageInfoToLocalStorage({
+        filename: campo, // Usa el nombre del campo como nombre de archivo
+        url: base64Image, // Utiliza el valor de la imagen como URL
+      });
+    } catch (error) {
+      console.error('Error al capturar o seleccionar la imagen:', error);
+      presentToast({
+        message: 'Error al capturar o seleccionar la imagen.',
+        duration: 2000,
+      });
+    }
+  };
+
+  const saveImageInfoToLocalStorage = (imageInfo: { filename: any; url: any; }) => {
+    try {
+      const imagesInLocalStorage = localStorage.getItem('images');
+      const parsedImages = imagesInLocalStorage ? JSON.parse(imagesInLocalStorage) : {};
+
+      // Guardar la información de la imagen usando el nombre de archivo como clave
+      parsedImages[imageInfo.filename] = imageInfo.url;
+
+      // Convertir a cadena JSON y guardar en el Local Storage
+      localStorage.setItem('images', JSON.stringify(parsedImages));
+    } catch (error) {
+      console.error('Error al guardar la información de la imagen en el Local Storage:', error);
+    }
+  };
+
+
+
+  // Funcion principal para manejar el envio del formulario al locale_storage 
+
   const handleSubmit = async () => {
     try {
       if (!nuevoNombre) {
@@ -173,10 +264,27 @@ const DetalleFormularioPage: React.FC = () => {
           ...prevFormulario,
           Nombre: nuevoNombre
         }));
+
+
+        
       }
 
       // Call the function to save the filled form
       await guardarFormularioLleno(formularioLleno);
+
+      // Agregar la referencia del archivo (nombre de la imagen) al formulario antes de guardarlo
+      if (formularioLleno.campos['imagen_campo']) {
+        const imagenCampoValue = formularioLleno.campos['imagen_campo'].value;
+        if (imagenCampoValue) {
+          const imageInfo = {
+            filename: 'imagen_guardada', // Nombre o clave utilizada para almacenar la imagen en el Local Storage
+            url: imagenCampoValue, // Puedes guardar aquí la URL de la imagen si la necesitas
+          };
+          saveImageInfoToLocalStorage(imageInfo);
+        }
+      }
+
+      
 
       // Navigate back to the previous page or any other desired destination
       history.push('/pages/empty_forms');
@@ -189,6 +297,9 @@ const DetalleFormularioPage: React.FC = () => {
     return <div>Formulario no encontrado.</div>;
   }
 
+
+
+  
   return (
     <IonPage>
       <IonHeader>
@@ -273,23 +384,40 @@ const DetalleFormularioPage: React.FC = () => {
                     ))}
                   </>
                 )}
+                {campoConfig.tipo === 'imgs' && (
+                  <div>
+                    <br/>
+                    {/* Mostrar el thumbnail de la imagen si existe */}
+                    {campoConfig.value && (
+                      <img
+                        src={`data:image/jpeg;base64,${campoConfig.value}`}
+                        alt={`Thumbnail-${campo}`}
+                        style={{ width: '100px', height: '100px' }}
+                      />
+                    )}
+
+                    <IonButton onClick={() => captureOrSelectImage(campo)}>
+                      Capturar o seleccionar imagen
+                    </IonButton>
+                  </div>
+                )}
               </IonItem>
             );
           })}
-          {/* Campo para mostrar la ubicación GPS */}
+
           <IonItem>
             <IonLabel>Ubicación GPS:</IonLabel>
-            <IonTextarea  
-            autoGrow
-            readonly 
-            value={gpsLocation ? `Latitud: ${gpsLocation.latitud.toFixed(6)}\nLongitud: ${gpsLocation.longitud.toFixed(6)}` : "Obteniendo ubicación..."} />
+            <IonTextarea
+              autoGrow
+              readonly
+              value={gpsLocation ? `Latitud: ${gpsLocation.latitud.toFixed(6)}\nLongitud: ${gpsLocation.longitud.toFixed(6)}` : "Obteniendo ubicación..."} />
           </IonItem>
         </IonList>
         <IonButton expand="full" onClick={handleSubmit}>
           Guardar
         </IonButton>
 
-        {/* Mostrar IonToast si hay un error */}
+
         <IonToast
           isOpen={showError}
           onDidDismiss={() => setShowError(false)}

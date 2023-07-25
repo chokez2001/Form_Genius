@@ -5,29 +5,8 @@ import { firestore_db } from './firebase_conecction';
 const storage = new Storage();
 storage.create();
 
-const guardarFormularioVacio = async (formulario: any) => {
-  try {
-    const formulariosVaciosJSON = await storage.get('formulariosVacios');
-    let formulariosVacios = formulariosVaciosJSON ? JSON.parse(formulariosVaciosJSON) : [];
 
-    const nombre = formulario.Nombre;
-    const formularioId = `P${formulariosVacios.length + 1}`;
 
-    if (formulariosVacios.some((form: any) => form.Nombre === nombre)) {
-      console.error('Ya existe un formulario vacío con el mismo nombre');
-      return;
-    }
-
-    formulariosVacios.push({ ...formulario, Id: formularioId });
-
-    await storage.set('formulariosVacios', JSON.stringify(formulariosVacios));
-
-    console.log('Formulario vacío guardado exitosamente en la base de datos local de dbindexed');
-
-  } catch (error) {
-    console.error('Error al guardar el formulario vacío:', error);
-  }
-};
 
 const obtenerFormulariosVacios = async () => {
   try {
@@ -43,6 +22,27 @@ const obtenerFormulariosVacios = async () => {
     throw error;
   }
 };
+
+
+const obtenerFormulariosLlenos = async () => {
+  try {
+    const formulariosLlenosJSON = await storage.get('formulariosLlenos');
+    if (formulariosLlenosJSON) {
+      const formulariosLlenos = JSON.parse(formulariosLlenosJSON) as any[];
+      return formulariosLlenos;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error al obtener los formularios Llenos:', error);
+    throw error;
+  }
+};
+
+
+
+
+
 
 const guardarFormularioVacioFirestore = async (formulario: any) => {
   const collectionRef = collection(firestore_db, 'form_genius');
@@ -72,7 +72,7 @@ const obtenerFormulariosVaciosFirestore = async () => {
 };
 
 const sincronizarFormulariosVacios = async () => {
-  const formulariosVaciosLocal = await obtenerFormulariosVacios();
+  const formulariosVaciosLocal = await obtenerFormulariosLlenos();
   const formulariosVaciosFirestore = await obtenerFormulariosVaciosFirestore();
 
   // Sincronizar los formularios vacíos existentes en la base de datos local
@@ -88,7 +88,6 @@ const sincronizarFormulariosVacios = async () => {
 };
 
 export {
-  guardarFormularioVacio,
   obtenerFormulariosVacios,
   guardarFormularioVacioFirestore,
   obtenerFormulariosVaciosFirestore,
