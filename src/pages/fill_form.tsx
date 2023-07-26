@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail, useIonToast } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail } from '@ionic/react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { Geolocation} from '@capacitor/geolocation';
 import { NativeSettings, AndroidSettings} from 'capacitor-native-settings';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
-
-
 import { guardarFormularioLleno } from '../models/dababase'; // Import the guardarFormularioLleno function
 
 interface LocationState {
@@ -15,6 +12,7 @@ interface LocationState {
 }
 
 interface CampoConfig {
+  tipo: string;
   value: any;
   name: string;
 }
