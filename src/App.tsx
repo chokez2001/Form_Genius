@@ -30,7 +30,7 @@ import ResetPage from './pages/Reset_password';
 import Dashboardpage from './pages/Dashboard_page';
 import FormulariosVaciosPage from './pages/Get_empty_forms';
 import AgregarFormularioVacioPage from './pages/Newform';
-import DetalleFormularioPage from './pages/Fill_form';
+import DetalleFormularioPage from './pages/fill_form';
 import MyPage from './pages/Firetest';
 import FormulariosVaciosSyncPage from './pages/Formularios_sync';
 /* Theme variables */

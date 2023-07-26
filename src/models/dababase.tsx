@@ -66,6 +66,10 @@ const guardarFormularioLleno = async (formulario: { Nombre: any; id_padre: any; 
 };
 
 
+
+
+
+
 const obtenerFormulariosVacios = async () => {
   try {
     const formulariosVaciosJSON = await storage.get('formulariosVacios');

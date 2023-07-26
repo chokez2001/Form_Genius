@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail, useIonToast } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail } from '@ionic/react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { Geolocation} from '@capacitor/geolocation';
 import { NativeSettings, AndroidSettings} from 'capacitor-native-settings';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
-
-
 import { guardarFormularioLleno } from '../models/dababase'; // Import the guardarFormularioLleno function
 
 interface LocationState {
@@ -15,6 +12,7 @@ interface LocationState {
 }
 
 interface CampoConfig {
+  tipo: string;
   value: any;
   name: string;
 }
@@ -36,8 +34,6 @@ const DetalleFormularioPage: React.FC = () => {
   // Utilizar useRef para crear referencias a los inputs del nombre del campo
   const campoNameInputsRef = useRef<(HTMLIonInputElement | null)[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number | null>(null); // Track the start time of the touch
-  
- 
 
   const handleChange = (campo: string, value: any) => {
     setFormularioLleno((prevFormulario: { campos: { [x: string]: any } }) => ({
@@ -60,85 +56,13 @@ const DetalleFormularioPage: React.FC = () => {
     }));
   };
 
-  const handleCampoNameChange = (campo: string, value: any) => {
-    setFormularioLleno((prevFormulario: { campos: { [x: string]: CampoConfig; }; }) => {
-      const newCampos: { [x: string]: CampoConfig } = { ...prevFormulario.campos };
-      const campoConfig = newCampos[campo];
-      if (campoConfig) {
-        // Obtener el valor del campo original
-        const campoValue = newCampos[campo].value;
-        // Eliminar el campo original usando el nombre actual como clave
-        delete newCampos[campo];
-        // Usar el nuevo nombre como clave para el campo y establecer el valor original
-        newCampos[value] = { tipo: campoConfig.tipo, value: campoValue, name: value };
-      }
-      return {
-        ...prevFormulario,
-        campos: newCampos,
-      };
-    });
-  };
-  
-  
-  const handleCampoNameBlur = (campo: string) => {
-    // Al salir del input, establecer el nombre del campo en el formularioLleno
-    const inputIndex = camposList.indexOf(campo);
-    if (inputIndex !== -1) {
-      const inputElement = campoNameInputsRef.current[inputIndex];
-      const newName = (inputElement?.value as string)?.trim() || campo; // Cast the value to string and use the original campo name if the input is empty after trimming
-      setFormularioLleno((prevFormulario: { campos: { [x: string]: CampoConfig; }; }) => {
-        const newCampos: { [x: string]: CampoConfig } = { ...prevFormulario.campos };
-        const campoConfig = newCampos[campo];
-        if (campoConfig) {
-          // Obtener el valor original del campo
-          const campoValue = campoConfig.value;
-          // Eliminar el campo original usando el nombre actual como clave
-          delete newCampos[campo];
-          // Usar el nuevo nombre como clave para el campo y establecer el valor original
-          newCampos[newName] = { ...campoConfig, name: newName };
-        }
-        return {
-          ...prevFormulario,
-          campos: newCampos,
-        };
-      });
-    }
-  };
-  
-  
-  
-  const handleCampoNameClick = (campo: string) => {
-    const inputIndex = camposList.indexOf(campo);
-    if (inputIndex !== -1) {
-      const inputElement = campoNameInputsRef.current[inputIndex];
-      if (inputElement && touchStartTime) {
-        const touchEndTime = Date.now();
-        const touchDuration = touchEndTime - touchStartTime;
-        // If the touch duration is less than 200 milliseconds, treat it as a tap and open the input block
-        if (touchDuration < 200) {
-          inputElement.click();
-        }
-      }
-    }
-  };
-
-  const handleCampoNameTouchStart = () => {
-    // Set the start time of the touch
-    setTouchStartTime(Date.now());
-  };
-
-  const handleCampoNameTouchEnd = (campo: string) => {
-    // Reset the touch start time when the touch ends
-    setTouchStartTime(null);
-  };
-
   const getLocation = async () => {
     // Obtener la ubicación
     const position = await Geolocation.getCurrentPosition();
     const latitud = position.coords.latitude;
     const longitud = position.coords.longitude;
     setGpsLocation({ latitud, longitud });
-  
+
     // Actualizar el estado del formularioLleno con la ubicación GPS
     setFormularioLleno((prevFormulario: any) => ({
       ...prevFormulario,
@@ -168,13 +92,11 @@ const DetalleFormularioPage: React.FC = () => {
       setFormularioLleno(initialFormularioLleno);
       getLocation();
 
-     // Establecer el nombre del formulario actual en la variable nuevoNombre
-     setNuevoNombre(formularioSeleccionado.Nombre || "");
+      // Establecer el nombre del formulario actual en la variable nuevoNombre
+      setNuevoNombre(formularioSeleccionado.Nombre || "");
     }
   }, [formularioSeleccionado]);
 
-
-  
   const handleSubmit = async () => {
     try {
       if (!nuevoNombre) {
@@ -241,17 +163,8 @@ const DetalleFormularioPage: React.FC = () => {
                 <IonLabel
                   style={{ fontSize: '130%' }}
                   position="stacked"
-                  onClick={() => handleCampoNameClick(campo)}
-                  onTouchStart={handleCampoNameTouchStart}
-                  onTouchEnd={() => handleCampoNameTouchEnd(campo)}
                 >
-                  <IonInput
-                    value={campoConfig.name}
-                    placeholder={`${campo}`}
-                    onIonChange={(e) => handleCampoNameChange(campo, e.detail.value)}
-                    onIonBlur={() => handleCampoNameBlur(campo)}
-                    ref={ref => campoNameInputsRef.current[index] = ref}
-                  />
+                  {campoConfig.name}
                 </IonLabel>
 
                 {campoConfig.tipo === 'short_text' && (
