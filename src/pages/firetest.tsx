@@ -1,4 +1,3 @@
-// UploadImagePage.tsx
 import React, { useState } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput } from '@ionic/react';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';

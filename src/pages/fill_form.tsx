@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonInput, IonTextarea, IonDatetime, IonCheckbox, IonButton, IonToast, InputChangeEventDetail } from '@ionic/react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { Geolocation} from '@capacitor/geolocation';
-import { NativeSettings, AndroidSettings} from 'capacitor-native-settings';
-import { Diagnostic } from '@ionic-native/diagnostic';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { guardarFormularioLleno } from '../models/dababase'; // Import the guardarFormularioLleno function
+import { auth } from '../models/user_control';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
 
 interface LocationState {
   formularioSeleccionado: any;
@@ -28,14 +29,29 @@ const DetalleFormularioPage: React.FC = () => {
   const [camposList, setCamposList] = useState<string[]>([]);
   const [nuevoNombre, setNuevoNombre] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showError, setShowError] = useState<boolean>(false);
+  const [showErrorToast, setShowErrorToast] = useState<boolean>(false);
   const [gpsLocation, setGpsLocation] = useState<{ latitud: number; longitud: number } | null>(null);
 
   // Utilizar useRef para crear referencias a los inputs del nombre del campo
   const campoNameInputsRef = useRef<(HTMLIonInputElement | null)[]>([]);
   const [touchStartTime, setTouchStartTime] = useState<number | null>(null); // Track the start time of the touch
   
- 
+ // Agregar la validación de autenticación de Firebase
+ const [user] = useAuthState(auth);
+ const [showAuthToast, setShowAuthToast] = useState<boolean>(false);
+
+ useEffect(() => {
+  // Mostrar el toast de autenticación si el usuario no está autenticado
+  if (!user) {
+    setShowAuthToast(true);
+    setTimeout(() => {
+      setShowAuthToast(false);
+      history.push('/pages/empty_forms');
+    }, 3500); // Redireccionar después de 5 segundos
+  }
+}, [user, history]);
+
+
 
   const handleChange = (campo: string, value: any) => {
     setFormularioLleno((prevFormulario: { campos: { [x: string]: any } }) => ({
@@ -58,24 +74,6 @@ const DetalleFormularioPage: React.FC = () => {
     }));
   };
 
-  const handleCampoNameChange = (campo: string, value: any) => {
-    setFormularioLleno((prevFormulario: { campos: { [x: string]: CampoConfig; }; }) => {
-      const newCampos: { [x: string]: CampoConfig } = { ...prevFormulario.campos };
-      const campoConfig = newCampos[campo];
-      if (campoConfig) {
-        // Obtener el valor del campo original
-        const campoValue = newCampos[campo].value;
-        // Eliminar el campo original usando el nombre actual como clave
-        delete newCampos[campo];
-        // Usar el nuevo nombre como clave para el campo y establecer el valor original
-        newCampos[value] = { tipo: campoConfig.tipo, value: campoValue, name: value };
-      }
-      return {
-        ...prevFormulario,
-        campos: newCampos,
-      };
-    });
-  };
   
   
   const handleCampoNameBlur = (campo: string) => {
@@ -174,11 +172,17 @@ const DetalleFormularioPage: React.FC = () => {
 
   
   const handleSubmit = async () => {
+     // Agregar la validación de autenticación de Firebase
+     if (!user) {
+      console.error('El usuario no está autenticado');
+      return;
+    }
+
     try {
       if (!nuevoNombre) {
         // Mostrar el mensaje de error usando IonToast
         setErrorMessage("Por favor, ingrese un nombre para el formulario antes de guardarlo.");
-        setShowError(true);
+        setShowErrorToast(true);
         return;
       }
 
@@ -190,7 +194,7 @@ const DetalleFormularioPage: React.FC = () => {
       if (!camposLlenos) {
         // Mostrar el mensaje de error usando IonToast
         setErrorMessage("Por favor, llene todos los campos antes de guardar el formulario.");
-        setShowError(true);
+        setShowErrorToast(true);
         return;
       }
 
@@ -238,18 +242,10 @@ const DetalleFormularioPage: React.FC = () => {
               <IonItem key={index}>
                 <IonLabel
                   style={{ fontSize: '130%' }}
-                  position="stacked"
-                  onClick={() => handleCampoNameClick(campo)}
-                  onTouchStart={handleCampoNameTouchStart}
-                  onTouchEnd={() => handleCampoNameTouchEnd(campo)}
-                >
-                  <IonInput
-                    value={campoConfig.name}
-                    placeholder={`${campo}`}
-                    onIonChange={(e) => handleCampoNameChange(campo, e.detail.value)}
-                    onIonBlur={() => handleCampoNameBlur(campo)}
-                    ref={ref => campoNameInputsRef.current[index] = ref}
-                  />
+                  position="stacked">
+                  
+                    {`${campo}`}
+  
                 </IonLabel>
 
                 {campoConfig.tipo === 'short_text' && (
@@ -314,10 +310,19 @@ const DetalleFormularioPage: React.FC = () => {
           Guardar
         </IonButton>
 
-        {/* Mostrar IonToast si hay un error */}
+        {/* Mostrar el toast de autenticación si el usuario no está autenticado */}
         <IonToast
-          isOpen={showError}
-          onDidDismiss={() => setShowError(false)}
+          isOpen={showAuthToast}
+          onDidDismiss={() => setShowAuthToast(false)}
+          message="Primero debes iniciar sesión para guardar el formulario."
+          duration={3000}
+          color="warning"
+        />
+
+        {/* Mostrar el toast de error si ocurrió un error en el guardado */}
+        <IonToast
+          isOpen={showErrorToast}
+          onDidDismiss={() => setShowErrorToast(false)}
           message={errorMessage || ""}
           duration={3000}
           color="danger"

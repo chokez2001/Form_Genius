@@ -1,28 +1,10 @@
 import { Storage } from '@ionic/storage';
-import { collection, addDoc, onSnapshot, CollectionReference, DocumentData, getDocs } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 import { firestore_db } from './firebase_conecction';
+import { auth } from './user_control';
 
 const storage = new Storage();
 storage.create();
-
-
-
-
-const obtenerFormulariosVacios = async () => {
-  try {
-    const formulariosVaciosJSON = await storage.get('formulariosVacios');
-    if (formulariosVaciosJSON) {
-      const formulariosVacios = JSON.parse(formulariosVaciosJSON) as any[];
-      return formulariosVacios;
-    } else {
-      return [];
-    }
-  } catch (error) {
-    console.error('Error al obtener los formularios vacíos:', error);
-    throw error;
-  }
-};
-
 
 const obtenerFormulariosLlenos = async () => {
   try {
@@ -39,57 +21,41 @@ const obtenerFormulariosLlenos = async () => {
   }
 };
 
+const guardarFormularioLlenoFirestore = async (formulario: any) => {
+  const user = auth.currentUser;
+  
+  if (!user) {
+    console.error('El usuario no está autenticado. No se puede guardar el formulario.');
+    return;
+  }
 
-
-
-
-
-const guardarFormularioVacioFirestore = async (formulario: any) => {
   const collectionRef = collection(firestore_db, 'form_genius');
-
+  
   try {
-    await addDoc(collectionRef, formulario);
-    console.log('Formulario vacío guardado exitosamente en Firestore');
+    const formularioId = `H${formulario.length + 1}`;
+
+    // Agregar el uid del usuario al objeto del formulario
+    const formularioConUid = {
+      ...formulario,
+      user_id: user.uid // Agregar el uid del usuario con la clave user_id
+    };
+
+    await addDoc(collectionRef, formularioConUid);
+    console.log('Formulario lleno guardado exitosamente en Firestore');
   } catch (error) {
-    console.error('Error al guardar el formulario vacío en Firestore:', error);
+    console.error('Error al guardar el formulario lleno en Firestore:', error);
   }
 };
 
-const obtenerFormulariosVaciosFirestore = async () => {
-  const collectionRef = collection(firestore_db, 'form_genius');
+const sincronizarFormulariosLLenos = async () => {
+  const formulariosLlenosLocal = await obtenerFormulariosLlenos();
 
-  try {
-    const querySnapshot = await getDocs(collectionRef);
-    const fetchedDocuments: any[] = [];
-    querySnapshot.forEach((doc) => {
-      fetchedDocuments.push({ id: doc.id, data: doc.data() });
-    });
-    return fetchedDocuments;
-  } catch (error) {
-    console.error('Error al obtener los formularios vacíos desde Firestore:', error);
-    throw error;
-  }
-};
-
-const sincronizarFormulariosVacios = async () => {
-  const formulariosVaciosLocal = await obtenerFormulariosLlenos();
-  const formulariosVaciosFirestore = await obtenerFormulariosVaciosFirestore();
-
-  // Sincronizar los formularios vacíos existentes en la base de datos local
-  formulariosVaciosLocal.forEach(async (formularioLocal: any) => {
-    const formularioId = formularioLocal.Id;
-    const formularioFirestore = formulariosVaciosFirestore.find((formulario) => formulario.id === formularioId);
-
-    if (!formularioFirestore) {
-      // Guardar formulario vacío en Firestore
-      await guardarFormularioVacioFirestore(formularioLocal);
-    }
+  // Sincronizar los formularios llenos existentes en la base de datos local con Firestore
+  formulariosLlenosLocal.forEach(async (formularioLocal) => {
+    await guardarFormularioLlenoFirestore(formularioLocal);
   });
 };
 
 export {
-  obtenerFormulariosVacios,
-  guardarFormularioVacioFirestore,
-  obtenerFormulariosVaciosFirestore,
-  sincronizarFormulariosVacios
+  sincronizarFormulariosLLenos
 };

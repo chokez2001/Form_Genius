@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IonButtons, IonContent, IonHeader, IonRefresher, IonLabel, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { Geolocation} from '@capacitor/geolocation';
 import logo from '../assets/logo.svg';
-
+import { sincronizarFormulariosLLenos } from '../models/sincronization';
 interface Location {
   latitude: number;
   longitude: number;
@@ -13,6 +13,12 @@ const Inicio: React.FC = () => {
     requestPermission();
   }, []);
 
+
+  useEffect(() => {
+    // Llamar a la función sincronizarFormulariosLLenos cuando se monte esta página
+    sincronizarFormulariosLLenos();
+  }, []);
+  
   const requestPermission = async () => {
     try {
       const permission = await Geolocation.requestPermissions();

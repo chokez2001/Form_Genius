@@ -31,9 +31,6 @@ const DetalleFormularioPage: React.FC = () => {
   const [showError, setShowError] = useState<boolean>(false);
   const [gpsLocation, setGpsLocation] = useState<{ latitud: number; longitud: number } | null>(null);
 
-  // Utilizar useRef para crear referencias a los inputs del nombre del campo
-  const campoNameInputsRef = useRef<(HTMLIonInputElement | null)[]>([]);
-  const [touchStartTime, setTouchStartTime] = useState<number | null>(null); // Track the start time of the touch
 
   const handleChange = (campo: string, value: any) => {
     setFormularioLleno((prevFormulario: { campos: { [x: string]: any } }) => ({
@@ -111,12 +108,12 @@ const DetalleFormularioPage: React.FC = () => {
         return formularioLleno?.campos[campo]?.value !== "";
       });
 
-      if (!camposLlenos) {
-        // Mostrar el mensaje de error usando IonToast
-        setErrorMessage("Por favor, llene todos los campos antes de guardar el formulario.");
-        setShowError(true);
-        return;
-      }
+      // if (!camposLlenos) {
+      //   // Mostrar el mensaje de error usando IonToast
+      //   setErrorMessage("Por favor, llene todos los campos antes de guardar el formulario.");
+      //   setShowError(true);
+      //   return;
+      // }
 
       if (nuevoNombre) {
         setFormularioLleno((prevFormulario: any) => ({

@@ -36,7 +36,7 @@ import GalleryPage from  './pages/view_images';
 
 import MyPage from './pages/Firetest';
 
-import FormulariosVaciosSyncPage from './pages/Formularios_sync';
+// import FormulariosVaciosSyncPage from './pages/Formularios_sync';
 /* Theme variables */
 import './theme/variables.css';
 
@@ -62,7 +62,7 @@ const App: React.FC = () => {
           <Route path="/pages/fill" component={DetalleFormularioPage} exact />
           <Route path="/pages/view_images" component={GalleryPage} exact />
           <Route path="/pages/fire" component={MyPage} exact />
-          <Route path="/pages/form_sync" component={FormulariosVaciosSyncPage} exact />
+          {/* <Route path="/pages/form_sync" component={FormulariosVaciosSyncPage} exact /> */}
           </IonRouterOutlet>
 
       </IonReactRouter>
