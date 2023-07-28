@@ -10,7 +10,7 @@ import {
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { colorFill, colorWand, folderOpenSharp, homeSharp, librarySharp, logInSharp, logOutSharp, newspaperSharp, personSharp, syncCircleSharp} from 'ionicons/icons';
+import { colorFill, colorWand, folderOpenSharp, homeSharp, imageSharp, librarySharp, logInSharp, logOutSharp, newspaperSharp, personSharp, syncCircleSharp} from 'ionicons/icons';
 import './Menu.css';
 
 
@@ -65,6 +65,13 @@ const appPages: AppPage[] = [
     url: '/pages/form_sync',
     iosIcon: syncCircleSharp,
     mdIcon: syncCircleSharp
+  },
+
+  {
+    title: 'Imagenes Guardadas',
+    url: '/pages/view_images',
+    iosIcon: imageSharp,
+    mdIcon: imageSharp
   },
 ];
 

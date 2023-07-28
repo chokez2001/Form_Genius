@@ -2,8 +2,9 @@ import { IonApp,IonRouterOutlet,setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
 import Menu from './components/Menu';
+import { app } from './models/firebase_conecction';
 
-
+const firebase =  app;
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -31,7 +32,10 @@ import Dashboardpage from './pages/Dashboard_page';
 import FormulariosVaciosPage from './pages/Get_empty_forms';
 import AgregarFormularioVacioPage from './pages/Newform';
 import DetalleFormularioPage from './pages/fill_form';
+import GalleryPage from  './pages/view_images';
+
 import MyPage from './pages/Firetest';
+
 import FormulariosVaciosSyncPage from './pages/Formularios_sync';
 /* Theme variables */
 import './theme/variables.css';
@@ -56,6 +60,7 @@ const App: React.FC = () => {
           <Route path="/pages/new" component={AgregarFormularioVacioPage} exact />
           <Route path="/pages/empty_forms" component={FormulariosVaciosPage} exact />
           <Route path="/pages/fill" component={DetalleFormularioPage} exact />
+          <Route path="/pages/view_images" component={GalleryPage} exact />
           <Route path="/pages/fire" component={MyPage} exact />
           <Route path="/pages/form_sync" component={FormulariosVaciosSyncPage} exact />
           </IonRouterOutlet>

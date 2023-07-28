@@ -66,13 +66,13 @@ const registerWithEmailAndPassword = async (name: string, email: string, passwor
 
     // Obtener el usuario creado
     const user = res.user;
-
+    console.log(user);
     // Agregar el usuario a la colección "users" con los datos adicionales
     await addDoc(collection(firestore_db, "users"), {
       uid: user.uid,
       name,
-      authProvider: "local",
       email,
+      password,
     });
 
     // Enviar el correo de verificación
